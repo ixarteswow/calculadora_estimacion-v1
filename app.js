@@ -1,66 +1,5 @@
-// Mock Database
-const WorkerDatabase = {
-    "A101": {
-        id: "A101",
-        name: "Ana Martínez",
-        role: "Desarrolladora Senior",
-        status: "Activo",
-        avatar: "https://ui-avatars.com/api/?name=Ana+Martinez&background=0D8ABC&color=fff",
-        schedule: {
-            workDays: [1, 2, 3, 4, 5], 
-            startHour: 9, startMinute: 0, endHour: 17, endMinute: 0,
-            holidays: ["2024-12-25", "2024-01-01", "2024-05-01"] 
-        }
-    },
-    "B202": {
-        id: "B202",
-        name: "Carlos Ruiz",
-        role: "Soporte Técnico",
-        status: "Activo",
-        avatar: "https://ui-avatars.com/api/?name=Carlos+Ruiz&background=EB4D4B&color=fff",
-        schedule: {
-            workDays: [2, 3, 4, 5, 6], 
-            startHour: 14, startMinute: 0, endHour: 22, endMinute: 0,
-            holidays: ["2024-12-25"]
-        }
-    },
-    "C303": {
-        id: "C303",
-        name: "Elena Code",
-        role: "DevOps (Fin de Semana)",
-        status: "Guardia",
-        avatar: "https://ui-avatars.com/api/?name=Elena+Code&background=8E44AD&color=fff",
-        schedule: {
-            workDays: [6, 0], 
-            startHour: 8, startMinute: 0, endHour: 20, endMinute: 0,
-            holidays: []
-        }
-    },
-    "D404": {
-        id: "D404",
-        name: "David Night",
-        role: "Seguridad / Monitoreo",
-        status: "Nocturno",
-        avatar: "https://ui-avatars.com/api/?name=David+Night&background=2C3E50&color=fff",
-        schedule: {
-            workDays: [1, 2, 3, 4, 5], 
-            startHour: 16, startMinute: 0, endHour: 23, endMinute: 59,
-            holidays: []
-        }
-    },
-    "E505": {
-        id: "E505",
-        name: "Sarah Morning",
-        role: "Junior Dev",
-        status: "Mañana",
-        avatar: "https://ui-avatars.com/api/?name=Sarah+Morning&background=F1C40F&color=fff",
-        schedule: {
-            workDays: [1, 2, 3, 4, 5], 
-            startHour: 8, startMinute: 0, endHour: 12, endMinute: 0,
-            holidays: []
-        }
-    }
-};
+// Database loaded from workers.js
+let WorkerDatabase = window.WorkerDatabase || {};
 
 let state = {
     workerId: null,
@@ -156,6 +95,8 @@ function formatDatePretty(date) {
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
     
+    // Data loaded via workers.js script tag
+
     // Elements
     const workerIdInput = document.getElementById('workerIdInput');
     const workerValidationIcon = document.getElementById('workerValidationIcon');
