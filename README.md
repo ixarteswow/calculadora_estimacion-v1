@@ -17,6 +17,13 @@ La calculadora no solo suma 8 horas al reloj. Tiene en cuenta:
 2.  **Fines de semana**: Si mañana es sábado y Ana no trabaja, salta al lunes.
 3.  **Festivos**: ¡Sí, también sabe cuándo es Navidad!
 
+### ✨ Nuevas Funcionalidades "Real World" (v2.1)
+El sistema ahora es más inteligente y tiene en cuenta la carga de trabajo real:
+
+*   **Colas de Trabajo (Simulado)**: Al cargar la página, se simula que algunos trabajadores están ocupados (hasta unas horas o incluso días).
+*   **Semáforo de Disponibilidad**: Verás de un vistazo quién está libre (🟢), ocupado (🟡/🟠) o saturado (🔴).
+*   **Fecha de Inicio Efectiva**: Si pides algo pero el trabajador está ocupado, la calculadora te dirá exactamente *cuándo* empezará realmente (Ej: "Comienza: Mañana a las 09:00").
+
 ---
 
 ## 👶 Para Principiantes: ¿Cómo lo uso?
@@ -36,36 +43,40 @@ La calculadora no solo suma 8 horas al reloj. Tiene en cuenta:
 
 ## 🤓 Para Nivel Medio: ¿Cómo funciona por dentro?
 
-Todo el cerebro está en `app.js`. Aquí tienes un mapa rápido:
+Todo el código Javascript está organizado en la carpeta `js/`.
 
-### 1. La Base de Datos (`WorkerDatabase`)
-Al principio del archivo verás un objeto gigante con los trabajadores.
+### 1. La Base de Datos (`js/workers.js`)
+Define un objeto global `WorkerDatabase` con los datos de los trabajadores.
 ```javascript
 "A101": {
     name: "Ana Martínez",
-    schedule: { ... } // Aquí definimos sus turnos
+    schedule: { ... } // Sus turnos
 }
 ```
-**Reto**: ¡Intenta añadirte a ti mismo como trabajador con tu propio horario!
 
-### 2. El Motor de Tiempo (`calculateEstimation`)
-Esta función es la joya de la corona.
-*   Toma la fecha de inicio (ahora).
-*   Va restando minutos a la tarea minuto a minuto (bueno, en saltos lógicos).
-*   Si llega al final del turno del trabajador, utiliza `jumpToNextShift` para "saltar" hasta la próxima mañana laborable.
+### 2. El Motor de Tiempo (`js/estimator.js`)
+Aquí vive la lógica pura, encapsulada en `AuroraEstimator`.
+*   Es independiente del DOM.
+*   **Calcula Fecha Efectiva**: Detecta cuándo empieza realmente el trabajo tras saltar colas o tiempos no laborables.
+*   Contiene la función `calculate(startDate, duration, worker)`.
+*   Gestiona los turnos, festivos y saltos de día.
 
-### 3. La Interfaz "Bento" (`UI Controller`)
-Usamos una arquitectura orientada a eventos sencilla.
-*   **Mobile-First**: Si miras el código, verás que todo está pensado primero para pantallas pequeñas y luego usamos `md:` para ampliarlo en PC.
-*   **Efecto Teatro**: Hemos programado la app para que **no calcule nada** hasta que pulsas el botón grande. Si intentas pulsar sin datos... ¡verás una animación de "shake" (temblor) advirtiéndote!
+### 3. La Interfaz (`js/app.js`)
+Es el controlador que conecta todo.
+*   Lee los inputs del usuario.
+*   Muestra/Oculta elementos (efecto Bento).
+*   Llama a `AuroraEstimator.calculate` para obtener resultados.
 
 ---
 
 ## 🎨 Estructura de Archivos
 
-*   `index.html`: El esqueleto y la piel (HTML + Tailwind CSS).
-*   `app.js`: El cerebro y los músculos (Lógica Javascript).
-*   `README.md`: Este manual que estás leyendo.
+*   `index.html`: La estructura y diseño (HTML + Tailwind CSS).
+*   `js/`: Carpeta con todo el código Javascript.
+    *   `estimator.js`: Lógica de negocio pura (Cálculos de tiempo).
+    *   `workers.js`: Datos de los empleados.
+    *   `app.js`: Lógica de la interfaz de usuario.
+*   `README.md`: Este manual.
 
 ---
 

@@ -96,3 +96,29 @@ window.WorkerDatabase = {
         }
     }
 };
+
+// ==========================================
+// SIMULATION LOGIC: Random Availability
+// ==========================================
+(function simulateWorkloads() {
+    const now = new Date();
+    Object.values(window.WorkerDatabase).forEach(worker => {
+        // Random check: 30% Free, 40% Busy small, 30% Busy large
+        const r = Math.random();
+        let busyMinutes = 0;
+
+        if (r > 0.3 && r <= 0.7) {
+            // Busy for 1-4 hours
+            busyMinutes = Math.floor(Math.random() * 240) + 60;
+        } else if (r > 0.7) {
+            // Busy for 1-3 days
+            busyMinutes = Math.floor(Math.random() * 4320) + 1440;
+        }
+
+        if (busyMinutes > 0) {
+            worker.busyUntil = new Date(now.getTime() + busyMinutes * 60000).toISOString();
+        } else {
+            worker.busyUntil = null; // Totally free
+        }
+    });
+})();

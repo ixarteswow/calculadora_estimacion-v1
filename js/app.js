@@ -7,83 +7,7 @@ let state = {
     isCustom: false
 };
 
-// ==========================================
-// CORE LOGIC 
-// ==========================================
-function getDayOfWeek(date) { return date.getDay(); }
-function formatDateISO(date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-}
-function isWorkDay(date, schedule) {
-    const dayOfWeek = getDayOfWeek(date);
-    const dateStr = formatDateISO(date);
-    if (!schedule.workDays.includes(dayOfWeek)) return false;
-    if (schedule.holidays.includes(dateStr)) return false;
-    return true;
-}
-function getShiftConfig(date, schedule) {
-    const start = new Date(date);
-    start.setHours(schedule.startHour, schedule.startMinute, 0, 0);
-    const end = new Date(date);
-    end.setHours(schedule.endHour, schedule.endMinute, 0, 0);
-    return { start, end };
-}
-function jumpToNextShift(currentDate, schedule) {
-    let nextDate = new Date(currentDate);
-    let attempts = 0;
-    while (attempts < 365) {
-        nextDate.setDate(nextDate.getDate() + 1);
-        nextDate.setHours(0, 0, 0, 0);
-        if (isWorkDay(nextDate, schedule)) {
-            const config = getShiftConfig(nextDate, schedule);
-            return config.start;
-        }
-        attempts++;
-    }
-    return nextDate;
-}
-function calculateEstimation(startDate, durationMinutes, workerId) {
-    const worker = WorkerDatabase[workerId];
-    if (!worker) return null;
-
-    let cursor = new Date(startDate);
-    let minutesRemaining = durationMinutes;
-    let events = [];
-
-    if (!isWorkDay(cursor, worker.schedule)) {
-        cursor = jumpToNextShift(cursor, worker.schedule);
-        events.push({ type: 'jump', msg: `Inicio diferido: fuera de turno` });
-    } else {
-        const todayConfig = getShiftConfig(cursor, worker.schedule);
-        if (cursor < todayConfig.start) {
-            cursor = new Date(todayConfig.start);
-        } else if (cursor >= todayConfig.end) {
-            cursor = jumpToNextShift(cursor, worker.schedule);
-            events.push({ type: 'jump', msg: `Inicio diferido: turno acabado` });
-        }
-    }
-
-    while (minutesRemaining > 0) {
-        const currentConfig = getShiftConfig(cursor, worker.schedule);
-        const timeUntilEnd = (currentConfig.end - cursor) / (1000 * 60);
-        
-        if (timeUntilEnd <= 0) {
-            cursor = jumpToNextShift(cursor, worker.schedule);
-            continue;
-        }
-        if (minutesRemaining <= timeUntilEnd) {
-            cursor = new Date(cursor.getTime() + minutesRemaining * 60000);
-            minutesRemaining = 0;
-        } else {
-            minutesRemaining -= timeUntilEnd;
-            cursor = jumpToNextShift(cursor, worker.schedule);
-        }
-    }
-    return { finishDate: cursor, events: events };
-}
+// Core logic moved to js/estimator.js
 function formatDatePretty(date) {
     const options = { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
     return date.toLocaleString('es-ES', options);
@@ -121,13 +45,42 @@ document.addEventListener('DOMContentLoaded', () => {
     const calendarGrid = document.getElementById('calendarGrid');
 
     // --- 1. Worker Logic ---
+    // --- 1. Worker Logic ---
     function showWorkerProfile(worker) {
         profileCard.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
         profileCard.classList.add('scale-100', 'opacity-100');
         workerAvatar.src = worker.avatar;
         workerName.textContent = worker.name;
         workerRole.textContent = worker.role;
-        workerStatus.textContent = "ACTIVO";
+        
+        // Semaphore Logic
+        const now = new Date();
+        const busyUntil = worker.busyUntil ? new Date(worker.busyUntil) : now;
+        const diffHours = (busyUntil - now) / (1000 * 60 * 60);
+
+        let statusText = "DISPONIBLE";
+        let statusClass = "bg-green-100 text-green-700";
+
+        if (diffHours <= 0) {
+             statusText = "DISPONIBLE";
+             statusClass = "bg-green-100 text-green-700";
+        } else if (diffHours < 2) {
+             statusText = "OCUPADO (<2h)";
+             statusClass = "bg-green-50 text-green-600";
+        } else if (diffHours < 24) {
+             statusText = "OCUPADO (Hoy)";
+             statusClass = "bg-yellow-100 text-yellow-800";
+        } else if (diffHours < 48) {
+             statusText = "COLA MEDIA";
+             statusClass = "bg-orange-100 text-orange-800";
+        } else {
+             statusText = "SATURADO";
+             statusClass = "bg-red-100 text-red-800";
+        }
+
+        workerStatus.className = `text-[9px] px-2 py-0.5 rounded-full font-bold ${statusClass}`;
+        workerStatus.textContent = statusText;
+        
         workerValidationIcon.classList.remove('hidden');
     }
 
@@ -225,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const el = sizeSelect.closest('.glass-panel');
             el.classList.remove('border-white/40');
             el.classList.add('animate-shake', 'border-red-500', 'bg-red-50/50');
-           setTimeout(() => {
+            setTimeout(() => {
                 el.classList.remove('animate-shake', 'border-red-500', 'bg-red-50/50');
                 el.classList.add('border-white/40');
             }, 400);
@@ -238,8 +191,12 @@ document.addEventListener('DOMContentLoaded', () => {
              return false;
         }
 
+        const worker = WorkerDatabase[state.workerId];
         const now = new Date(); 
-        const result = calculateEstimation(now, state.durationMinutes, state.workerId);
+        // Concurrency Logic: Max(Now, BusyUntil)
+        const realStart = new Date(Math.max(now.getTime(), worker.busyUntil ? new Date(worker.busyUntil).getTime() : 0));
+        
+        const result = AuroraEstimator.calculate(realStart, state.durationMinutes, worker);
         
         if (result) {
             emptyState.classList.add('hidden', 'scale-95', 'opacity-0');
@@ -247,6 +204,17 @@ document.addEventListener('DOMContentLoaded', () => {
             
             finalDateDisplay.textContent = formatDatePretty(result.finishDate);
             
+            // Inject Effective Start Date Display
+            let startDisplay = document.getElementById('effectiveStartDisplay');
+            if(!startDisplay) {
+                startDisplay = document.createElement('p');
+                startDisplay.id = 'effectiveStartDisplay';
+                startDisplay.className = "text-[10px] text-white/70 mt-1 uppercase tracking-widest";
+                // Insert after Final Date
+                finalDateDisplay.parentNode.insertBefore(startDisplay, finalDateDisplay.nextSibling);
+            }
+            startDisplay.textContent = `Comienza: ${formatDatePretty(result.effectiveStartDate)}`;
+
             timelineContainer.innerHTML = '';
             if (result.events.length > 0) {
                  result.events.slice(0, 3).forEach(evt => {
