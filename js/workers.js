@@ -85,7 +85,7 @@ window.WorkerDatabase = {
     },
     "H808": {
         "id": "H808",
-        "name": "Hector Intern",
+        "name": "Falla la conexion Supabase",
         "role": "Becario QA",
         "status": "Aprendiendo",
         "avatar": "https://ui-avatars.com/api/?name=Hector+Intern&background=795548&color=fff",
