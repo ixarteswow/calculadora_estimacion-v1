@@ -1,0 +1,47 @@
+[
+  {
+    "id": "J001",
+    "name": "Julia Cloud",
+    "role": "Arquitecta de Nube",
+    "status": "Disponible",
+    "avatar_url": "https://ui-avatars.com/api/?name=Julia+Cloud&background=673AB7&color=fff",
+    "schedule": { "workDays": [1, 2, 3, 4, 5], "startHour": 8, "startMinute": 0, "endHour": 16, "endMinute": 0, "holidays": [] },
+    "busyUntil": null
+  },
+  {
+    "id": "K002",
+    "name": "Kevin Security",
+    "role": "Ciberseguridad",
+    "status": "Ocupado",
+    "avatar_url": "https://ui-avatars.com/api/?name=Kevin+Security&background=34495E&color=fff",
+    "schedule": { "workDays": [1, 2, 3, 4, 5], "startHour": 10, "startMinute": 0, "endHour": 19, "endMinute": 0, "holidays": [] },
+    "busyUntil": "2025-10-30T15:00:00.000Z" 
+  },
+  {
+    "id": "L003",
+    "name": "Laura Data",
+    "role": "Data Scientist",
+    "status": "Saturada",
+    "avatar_url": "https://ui-avatars.com/api/?name=Laura+Data&background=E67E22&color=fff",
+    "schedule": { "workDays": [1, 3, 5], "startHour": 9, "startMinute": 0, "endHour": 15, "endMinute": 0, "holidays": [] },
+    "busyUntil": "2025-11-05T09:00:00.000Z"
+  },
+  {
+    "id": "M004",
+    "name": "Mario Frontend",
+    "role": "Desarrollador Vue",
+    "status": "Cola Media",
+    "avatar_url": "https://ui-avatars.com/api/?name=Mario+Frontend&background=41B883&color=fff",
+    "schedule": { "workDays": [1, 2, 3, 4, 5], "startHour": 9, "startMinute": 30, "endHour": 17, "endMinute": 30, "holidays": [] },
+    "busyUntil": "2025-10-31T12:00:00.000Z"
+  },
+  {
+    "id": "N005",
+    "name": "Nora Manager",
+    "role": "Project Manager",
+    "status": "Reunión",
+    "avatar_url": "https://ui-avatars.com/api/?name=Nora+Manager&background=E91E63&color=fff",
+    "schedule": { "workDays": [1, 2, 3, 4], "startHour": 9, "startMinute": 0, "endHour": 18, "endMinute": 0, "holidays": [] },
+    "busyUntil": "2025-10-30T10:30:00.000Z"
+  }
+]

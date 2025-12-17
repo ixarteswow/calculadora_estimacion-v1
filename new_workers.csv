@@ -1,0 +1,6 @@
+id,name,role,status,avatar,schedule
+J001,"Julia Cloud","Arquitecta de Nube",Disponible,https://ui-avatars.com/api/?name=Julia+Cloud&background=673AB7&color=fff,"{""workDays"": [1, 2, 3, 4, 5], ""startHour"": 8, ""startMinute"": 0, ""endHour"": 16, ""endMinute"": 0, ""holidays"": []}"
+K002,"Kevin Security",Ciberseguridad,Ocupado,https://ui-avatars.com/api/?name=Kevin+Security&background=34495E&color=fff,"{""workDays"": [1, 2, 3, 4, 5], ""startHour"": 10, ""startMinute"": 0, ""endHour"": 19, ""endMinute"": 0, ""holidays"": []}"
+L003,"Laura Data","Data Scientist",Saturada,https://ui-avatars.com/api/?name=Laura+Data&background=E67E22&color=fff,"{""workDays"": [1, 3, 5], ""startHour"": 9, ""startMinute"": 0, ""endHour"": 15, ""endMinute"": 0, ""holidays"": []}"
+M004,"Mario Frontend","Desarrollador Vue","Cola Media",https://ui-avatars.com/api/?name=Mario+Frontend&background=41B883&color=fff,"{""workDays"": [1, 2, 3, 4, 5], ""startHour"": 9, ""startMinute"": 30, ""endHour"": 17, ""endMinute"": 30, ""holidays"": []}"
+N005,"Nora Manager","Project Manager",Reunión,https://ui-avatars.com/api/?name=Nora+Manager&background=E91E63&color=fff,"{""workDays"": [1, 2, 3, 4], ""startHour"": 9, ""startMinute"": 0, ""endHour"": 18, ""endMinute"": 0, ""holidays"": []}"

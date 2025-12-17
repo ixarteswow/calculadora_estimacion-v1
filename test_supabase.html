@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Supabase Connection Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body style="font-family: sans-serif; padding: 20px; background: #f0f0f0;">
+
+    <h1>Prueba de Conexión a Supabase</h1>
+    <div id="status" style="padding: 10px; background: white; border-radius: 8px; margin-bottom: 20px;">
+        Conectando...
+    </div>
+
+    <h2>Resultados (Console Log):</h2>
+    <pre id="output" style="background: #333; color: #0f0; padding: 15px; border-radius: 8px; overflow: auto;"></pre>
+
+    <script>
+        const supabaseUrl = 'https://rxlpviuvvtudnkgxacxf.supabase.co'; 
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ4bHB2aXV2dnR1ZG5rZ3hhY3hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5NjkzMjUsImV4cCI6MjA4MTU0NTMyNX0.2lMbHnqtD2umo90_Oc48Uwc-psaUqAzkvi-M8R0INgM';
+
+        const statusDiv = document.getElementById('status');
+        const outputPre = document.getElementById('output');
+
+        function log(msg, isError = false) {
+            console.log(msg);
+            outputPre.textContent += (isError ? "❌ " : "✅ ") + JSON.stringify(msg, null, 2) + "\n";
+            if (isError) statusDiv.style.color = "red";
+        }
+
+        async function testConnection() {
+            try {
+                const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                
+                statusDiv.textContent = "Intentando fetch a tabla 'workers'...";
+                
+                const { data, error } = await supabase
+                    .from('workers')
+                    .select('*');
+
+                if (error) {
+                    throw error;
+                }
+
+                statusDiv.textContent = "¡Conexión Exitosa!";
+                statusDiv.style.color = "green";
+                log("Datos recibidos: " + data.length + " trabajadores");
+                log(data);
+
+            } catch (err) {
+                statusDiv.textContent = "Error de Conexión";
+                log(err.message || err, true);
+            }
+        }
+
+        if (window.supabase) {
+            testConnection();
+        } else {
+            log("Librería Supabase no cargada", true);
+        }
+    </script>
+</body>
+</html>

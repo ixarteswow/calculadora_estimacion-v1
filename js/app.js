@@ -190,6 +190,66 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- 2. Initial Execution ---
     renderDirectory();
 
+    // B. Try to upgrade with Supabase Data (Progressive Enhancement)
+    if (window.SupabaseClient) {
+        window.SupabaseClient.init();
+        
+        // Visual indicator: Connecting...
+        const statusText = document.getElementById('connectionStatusText');
+        const statusDot = document.getElementById('connectionStatusDot');
+        const connectionStatusPill = document.getElementById('connectionStatusPill');
+
+        if(connectionStatusPill) {
+             connectionStatusPill.style.display = 'flex'; 
+             if(statusText) statusText.textContent = "CONECTANDO...";
+             if(statusDot) statusDot.innerHTML = '<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-gray-500"></span>';
+        }
+
+        window.SupabaseClient.fetchWorkers().then(remoteWorkers => {
+            if (remoteWorkers) {
+                // Success: Update DB and Re-render
+                
+                // Success: Update DB and Re-render
+                
+                // HYDRATION STEP: Map text status to busyUntil date for the estimator
+                const now = new Date();
+                Object.values(remoteWorkers).forEach(w => {
+                    const s = (w.status || "").toLowerCase();
+                    let addedMinutes = 0;
+
+                    // Manual overrides based on DB text status
+                    if(s.includes('saturad')) addedMinutes = 2880; // 2 days
+                    else if(s.includes('cola media')) addedMinutes = 1440; // 24h
+                    else if(s.includes('ocupado')) addedMinutes = 240; // 4h
+                    else if(s.includes('reunión') || s.includes('reunion')) addedMinutes = 60; // 1h
+                    else if(s.includes('guardia')) addedMinutes = 0; // Available but special
+                    
+                    // Only apply if busyUntil is missing or expired
+                    if(!w.busyUntil || new Date(w.busyUntil) < now) {
+                        if(addedMinutes > 0) {
+                            w.busyUntil = new Date(now.getTime() + addedMinutes * 60000).toISOString();
+                        } else {
+                            w.busyUntil = null; // Free
+                        }
+                    }
+                });
+
+                WorkerDatabase = remoteWorkers;
+                renderDirectory(); 
+                
+                // Update UI: Online
+                if(statusText) statusText.textContent = "ONLINE";
+                if(statusDot) statusDot.innerHTML = '<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>';
+                console.log("✅ App updated with Supabase data.");
+            } else {
+                 // Failure (silent fallback to local)
+                 if(statusText) statusText.textContent = "OFFLINE (Local)";
+                 if(statusDot) statusDot.innerHTML = '<span class="relative inline-flex rounded-full h-2 w-2 bg-gray-500"></span>';
+                 console.log("⚠️ Supabase update failed or empty. Staying on local data.");
+            }
+        });
+    }
+
     // --- 3. Event Listeners ---
     workerIdInput.addEventListener('input', (e) => {
         const id = e.target.value.toUpperCase();
