@@ -33,5 +33,5 @@ ehthumbs.db
 Desktop.ini
 
 # Documentation
-*.md
+!*.md
 !README.md

@@ -1,4 +1,5 @@
-// Database loaded from workers.js
+
+// Database (Fallback to local from workers.js if available)
 let WorkerDatabase = window.WorkerDatabase || {};
 
 let state = {
@@ -7,21 +8,15 @@ let state = {
     isCustom: false
 };
 
-// Core logic moved to js/estimator.js
+// Core logic (could be imported, but simple enough here) ... actually dependent on estimator.js
 function formatDatePretty(date) {
     const options = { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
     return date.toLocaleString('es-ES', options);
 }
 
-
-// ==========================================
-// UI CONTROLLER (AURORA BENTO)
-// ==========================================
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     
-    // Data loaded via workers.js script tag
-
-    // Elements
+    // --- 0. Elements & Init ---
     const workerIdInput = document.getElementById('workerIdInput');
     const workerValidationIcon = document.getElementById('workerValidationIcon');
     const profileCard = document.getElementById('profileCard');
@@ -44,8 +39,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const calendarMonthTitle = document.getElementById('calendarMonthTitle');
     const calendarGrid = document.getElementById('calendarGrid');
 
-    // --- 1. Worker Logic ---
-    // --- 1. Worker Logic ---
+    const workerListModal = document.getElementById('workerListModal');
+    const workerListContainer = document.getElementById('workerListContainer');
+    const closeHelpBtn = document.getElementById('closeHelpBtn');
+    const helpBtn = document.getElementById('helpBtn');
+    const openDirectoryBtn = document.getElementById('openDirectoryBtn');
+    const workerSearchInput = document.getElementById('workerSearchInput');
+    const statusFilterSelect = document.getElementById('statusFilterSelect');
+
+    const connectionStatusPill = document.getElementById('connectionStatusPill');
+    if(connectionStatusPill) connectionStatusPill.style.display = 'none'; // Hide status pill in local mode
+
+    // Default Filter State
+    let currentFilter = 'ALL'; 
+    let currentSearch = '';
+
+    // --- 1. Worker Logic & Helpers ---
+    function getWorkerStatus(worker) {
+        const now = new Date();
+        const busyUntil = worker.busyUntil ? new Date(worker.busyUntil) : now;
+        const diffHours = (busyUntil - now) / (1000 * 60 * 60);
+
+        if (diffHours <= 0) {
+            return { type: 'GREEN', text: "DISPONIBLE", class: "bg-green-100 text-green-700", weight: 1 };
+        } else if (diffHours < 2) {
+            return { type: 'GREEN', text: "OCUPADO (<2h)", class: "bg-green-50 text-green-600", weight: 2 };
+        } else if (diffHours < 24) {
+             return { type: 'YELLOW', text: "OCUPADO (Hoy)", class: "bg-yellow-100 text-yellow-800", weight: 3 };
+        } else if (diffHours < 48) {
+             return { type: 'RED', text: "COLA MEDIA", class: "bg-orange-100 text-orange-800", weight: 4 };
+        } else {
+             return { type: 'RED', text: "SATURADO", class: "bg-red-100 text-red-800", weight: 5 };
+        }
+    }
+
     function showWorkerProfile(worker) {
         profileCard.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
         profileCard.classList.add('scale-100', 'opacity-100');
@@ -53,33 +80,10 @@ document.addEventListener('DOMContentLoaded', () => {
         workerName.textContent = worker.name;
         workerRole.textContent = worker.role;
         
-        // Semaphore Logic
-        const now = new Date();
-        const busyUntil = worker.busyUntil ? new Date(worker.busyUntil) : now;
-        const diffHours = (busyUntil - now) / (1000 * 60 * 60);
+        const status = getWorkerStatus(worker);
 
-        let statusText = "DISPONIBLE";
-        let statusClass = "bg-green-100 text-green-700";
-
-        if (diffHours <= 0) {
-             statusText = "DISPONIBLE";
-             statusClass = "bg-green-100 text-green-700";
-        } else if (diffHours < 2) {
-             statusText = "OCUPADO (<2h)";
-             statusClass = "bg-green-50 text-green-600";
-        } else if (diffHours < 24) {
-             statusText = "OCUPADO (Hoy)";
-             statusClass = "bg-yellow-100 text-yellow-800";
-        } else if (diffHours < 48) {
-             statusText = "COLA MEDIA";
-             statusClass = "bg-orange-100 text-orange-800";
-        } else {
-             statusText = "SATURADO";
-             statusClass = "bg-red-100 text-red-800";
-        }
-
-        workerStatus.className = `text-[9px] px-2 py-0.5 rounded-full font-bold ${statusClass}`;
-        workerStatus.textContent = statusText;
+        workerStatus.className = `text-[9px] px-2 py-0.5 rounded-full font-bold ${status.class}`;
+        workerStatus.textContent = status.text;
         
         workerValidationIcon.classList.remove('hidden');
     }
@@ -96,6 +100,97 @@ document.addEventListener('DOMContentLoaded', () => {
         calendarPanel.classList.add('hidden', 'opacity-0', 'translate-x-10');
     }
 
+    /* -------------------------------------------------------------
+       WORKER DIRECTORY: FILTER, SEARCH, SORT
+    ------------------------------------------------------------- */
+    function renderDirectory() {
+        workerListContainer.innerHTML = '';
+        console.log("Rendering Directory from Local DB:", WorkerDatabase);
+
+        let workers = Object.values(WorkerDatabase).map(w => ({
+            ...w,
+            computedStatus: getWorkerStatus(w)
+        }));
+
+        if (currentSearch) {
+            const q = currentSearch.toLowerCase();
+            workers = workers.filter(w => 
+                w.name.toLowerCase().includes(q) || 
+                w.id.toLowerCase().includes(q) ||
+                w.role.toLowerCase().includes(q)
+            );
+        }
+
+        if (currentFilter !== 'ALL') {
+            workers = workers.filter(w => w.computedStatus.type === currentFilter);
+        }
+
+        workers.sort((a, b) => {
+            if (a.computedStatus.weight !== b.computedStatus.weight) {
+                return a.computedStatus.weight - b.computedStatus.weight;
+            }
+            return a.name.localeCompare(b.name);
+        });
+
+        if (workers.length === 0) {
+            workerListContainer.innerHTML = `
+                <div class="text-center py-8 text-gray-400">
+                    <p class="text-xs">No se encontraron resultados</p>
+                </div>`;
+            return;
+        }
+
+        workers.forEach(w => {
+            const item = document.createElement('div');
+            item.className = "flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-xl cursor-pointer transition-colors border border-transparent hover:border-gray-100 group";
+            
+            item.innerHTML = `
+                <div class="font-mono text-xs font-bold bg-blue-100 text-blue-600 px-2 py-1 rounded-md group-hover:bg-blue-600 group-hover:text-white transition-colors">${w.id}</div>
+                <div class="flex-1">
+                    <div class="flex justify-between items-center">
+                        <p class="text-sm font-bold text-gray-700">${w.name}</p>
+                         <div class="text-[9px] px-2 py-0.5 rounded-full font-bold ${w.computedStatus.class}">
+                            ${w.computedStatus.text}
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 flex items-center gap-1">
+                        ${w.role}
+                    </p>
+                </div>
+            `;
+            item.addEventListener('click', () => {
+                workerIdInput.value = w.id;
+                workerIdInput.dispatchEvent(new Event('input')); 
+                toggleHelpModal(false);
+            });
+            workerListContainer.appendChild(item);
+        });
+    }
+
+    function toggleHelpModal(show) {
+        if(show) {
+            workerListModal.classList.remove('hidden');
+            workerListModal.classList.add('flex');
+            
+            // Reload list (in case of new filters/data)
+            renderDirectory();
+
+            setTimeout(() => {
+                document.getElementById('workerListContent').classList.remove('scale-95', 'opacity-0', 'translate-y-full');
+            }, 10);
+        } else {
+             document.getElementById('workerListContent').classList.add('scale-95', 'opacity-0', 'translate-y-full');
+             setTimeout(() => {
+                workerListModal.classList.add('hidden');
+                workerListModal.classList.remove('flex');
+             }, 300);
+        }
+    }
+
+    // --- 2. Initial Execution ---
+    renderDirectory();
+
+    // --- 3. Event Listeners ---
     workerIdInput.addEventListener('input', (e) => {
         const id = e.target.value.toUpperCase();
         state.workerId = null; 
@@ -110,7 +205,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- 2. Duration Logic ---
     // Populate Select
     if(sizeSelect.options.length === 0) {
         const opts = [
@@ -157,7 +251,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- 3. Main Calculation Logic ---
     window.updateCalculation = function() { // Global for button click
         let isValid = true;
         
@@ -231,7 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
             calendarPanel.classList.remove('hidden', 'opacity-0', 'translate-x-10');
         }
         return true;
-    }
+    };
 
     // --- 4. Calendar & Help Logic ---
     function renderCalendar(targetDate) {
@@ -267,53 +360,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    const workerListModal = document.getElementById('workerListModal');
-    const workerListContainer = document.getElementById('workerListContainer');
-    const closeHelpBtn = document.getElementById('closeHelpBtn');
-    const helpBtn = document.getElementById('helpBtn');
 
-    function toggleHelpModal(show) {
-        const content = document.getElementById('workerListContent');
-        if(show) {
-            workerListModal.classList.remove('hidden');
-            workerListModal.classList.add('flex');
-            // Populate
-             if (workerListContainer.children.length === 0) {
-                Object.values(WorkerDatabase).forEach(w => {
-                    const item = document.createElement('div');
-                    item.className = "flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-xl cursor-pointer transition-colors border border-transparent hover:border-gray-100 group";
-                    item.innerHTML = `
-                        <div class="font-mono text-xs font-bold bg-blue-100 text-blue-600 px-2 py-1 rounded-md group-hover:bg-blue-600 group-hover:text-white transition-colors">${w.id}</div>
-                        <div class="flex-1">
-                            <p class="text-sm font-bold text-gray-700">${w.name}</p>
-                            <p class="text-xs text-gray-500">${w.role}</p>
-                        </div>
-                    `;
-                    item.addEventListener('click', () => {
-                        workerIdInput.value = w.id;
-                        workerIdInput.dispatchEvent(new Event('input')); 
-                        toggleHelpModal(false);
-                    });
-                    workerListContainer.appendChild(item);
-                });
-            }
-            // Trigger animation
-            setTimeout(() => {
-                content.classList.remove('scale-95', 'opacity-0', 'translate-y-full');
-            }, 10);
-        } else {
-             content.classList.add('scale-95', 'opacity-0', 'translate-y-full');
-             setTimeout(() => {
-                workerListModal.classList.add('hidden');
-                workerListModal.classList.remove('flex');
-             }, 300);
-        }
-    }
-
-    const openDirectoryBtn = document.getElementById('openDirectoryBtn');
-
+    
+    // Event Listeners
     if(helpBtn) helpBtn.addEventListener('click', () => toggleHelpModal(true));
     if(openDirectoryBtn) openDirectoryBtn.addEventListener('click', () => toggleHelpModal(true));
     if(closeHelpBtn) closeHelpBtn.addEventListener('click', () => toggleHelpModal(false));
+
+    // Search Listener
+    if(workerSearchInput) {
+        workerSearchInput.addEventListener('input', (e) => {
+            currentSearch = e.target.value;
+            renderDirectory();
+        });
+    }
+
+    // Filter Dropdown Listener
+    if (statusFilterSelect) {
+        statusFilterSelect.addEventListener('change', (e) => {
+            currentFilter = e.target.value;
+            renderDirectory();
+        });
+    }
 
 });

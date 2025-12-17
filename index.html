@@ -122,12 +122,12 @@
                 </div>
                 
                 <!-- Status Pill -->
-                <div class="bg-white/50 backdrop-blur-md border border-white/60 px-3 py-1.5 md:px-4 md:py-2 rounded-full flex items-center space-x-2 shadow-sm">
-                     <span class="relative flex h-2 w-2">
+                <div id="connectionStatusPill" class="bg-white/50 backdrop-blur-md border border-white/60 px-3 py-1.5 md:px-4 md:py-2 rounded-full flex items-center space-x-2 shadow-sm transition-colors">
+                     <span id="connectionStatusDot" class="relative flex h-2 w-2">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                     </span>
-                    <span class="text-[9px] md:text-[10px] font-bold text-gray-500 tracking-wide">ONLINE</span>
+                    <span id="connectionStatusText" class="text-[9px] md:text-[10px] font-bold text-gray-500 tracking-wide">ONLINE</span>
                 </div>
 
                 <!-- Decorative Gradient Blob -->
@@ -139,7 +139,7 @@
                 <div class="flex justify-between items-center">
                     <div class="flex items-center space-x-2">
                         <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">01. Worker</label>
-                        <button id="openDirectoryBtn" class="p-1.5 bg-blue-50 text-blue-500 rounded-lg hover:bg-blue-100 transition-colors" title="Ver directorio">
+                        <button id="openDirectoryBtn" onclick="window.toggleHelpModal(true)" class="p-1.5 bg-blue-50 text-blue-500 rounded-lg hover:bg-blue-100 transition-colors" title="Ver directorio">
                             <svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                         </button>
                     </div>
@@ -239,14 +239,41 @@
 
         <!-- Worker List Modal (Re-implemented as Backdrop) -->
          <div id="workerListModal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-md hidden flex items-end md:items-center justify-center transition-opacity duration-300">
-            <div class="bg-white rounded-t-[2rem] md:rounded-[2rem] p-6 md:p-8 w-full md:max-w-sm shadow-2xl scale-100 md:scale-95 opacity-0 transition-all duration-300 translate-y-full md:translate-y-0" id="workerListContent">
-                 <div class="flex justify-between items-center mb-6">
+            <div class="bg-white rounded-t-[2rem] md:rounded-[2rem] p-6 md:p-8 w-full md:max-w-md shadow-2xl scale-100 md:scale-95 opacity-0 transition-all duration-300 translate-y-full md:translate-y-0" id="workerListContent">
+                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-xl font-bold text-gray-800">Directorio</h3>
                     <button id="closeHelpBtn" class="bg-gray-100 p-2 rounded-full hover:bg-gray-200">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
-                 <div class="space-y-3 max-h-[60vh] overflow-y-auto pb-8 md:pb-0" id="workerListContainer"></div>
+
+                <!-- Search & Filters -->
+                <div class="flex flex-col gap-3 mb-4">
+                    <!-- Search Input -->
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                        <input type="text" id="workerSearchInput" 
+                            class="w-full pl-10 pr-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition-colors bg-gray-50/50"
+                            placeholder="Buscar por nombre o ID...">
+                    </div>
+
+                    <!-- Filter Dropdown -->
+                    <div class="relative">
+                        <select id="statusFilterSelect" class="w-full appearance-none bg-gray-50 border border-gray-200 text-gray-700 py-2.5 px-4 pr-8 rounded-xl leading-tight focus:outline-none focus:bg-white focus:border-blue-500 text-xs md:text-sm font-bold transition-all cursor-pointer hover:border-blue-300">
+                            <option value="ALL">Mostrar Todos</option>
+                            <option value="GREEN">🟢 Disponibles</option>
+                            <option value="YELLOW">🟡 Ocupado (Hoy)</option>
+                            <option value="RED">🔴 Saturados</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                 <div class="space-y-3 max-h-[50vh] overflow-y-auto pb-8 md:pb-0" id="workerListContainer"></div>
             </div>
          </div>
 
