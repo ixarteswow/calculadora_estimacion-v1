@@ -1,0 +1,20 @@
+.DS_Store
+node_modules/
+dist/
+.env
+js/config.js
+docs/
+
+# Capturas y assets locales (no subir)
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+
+# Scripts SQL / datos de prueba locales
+insert_fulanito.sql
+new_workers.json
+
+# Pruebas con credenciales embebidas
+test_supabase.html
