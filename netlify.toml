@@ -1,0 +1,4 @@
+# Sitio estático: la raíz del repo es la carpeta publicada
+[build]
+  publish = "."
+  command = "bash scripts/generate-config.sh"
