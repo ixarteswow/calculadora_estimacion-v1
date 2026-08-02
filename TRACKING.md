@@ -51,13 +51,15 @@
 | T-10 | Alinear `docs/knowledge/*` con código y tests | ✅ | Contrato de `schedule`, errores, eventos y ejemplos en `logica_estimacion.md`; autoridad del motor en `arquitectura_datos.md` |
 | T-11 | D-03: versionar `docs/knowledge/` | ✅ | `docs/` fuera de `.gitignore`; 15 archivos commiteados |
 
-### Hito M4 — Refactor mínimo de interfaz
+### Hito M4 — Refactor mínimo de interfaz ✅
 
 | ID | Descripción | Estado | Notas |
 |---|---|---|---|
-| T-12 | Extraer render a `js/ui.js` | ⬜ | |
-| T-13 | Listeners en vez de `onclick`; `reset()` sin reload | ⬜ | |
-| T-14 | Limpieza: comentarios duplicados, logs, D-04 | ⬜ | |
+| T-12 | Extraer render a `js/ui.js` | ✅ | `window.AuroraUi`: perfil, directorio, popover, resultado, calendario, pill, picker. `app.js` pasó de 678 → 230 líneas |
+| T-13 | Listeners en vez de `onclick`; `reset()` sin reload | ✅ | Cero `onclick`/`location.reload()` en el proyecto; botones con `id` + listeners |
+| T-14 | Limpieza: comentarios duplicados, logs, D-04 | ✅ | `console.log` de trazado eliminados; worker "Falla la conexion Supabase" → "Hugo Intern" |
+
+## Bloque B — COMPLETADO ✅
 
 ---
 
@@ -87,3 +89,17 @@
 1. **El bug de T16 no era teórico**: al correr la batería inicial, el motor **colgó la suite completa** (bucle infinito con `startHour >= endHour`, tal como predecía la auditoría). En fase roja T16 se marcó `skip` con la razón documentada — el bug es el cuelgue mismo; se activó al validar el horario (T-06) y pasó verde.
 2. **Falso verde en fase roja (T14 caso 1)**: con el código viejo, `holidays` ausente reventaba en `schedule.holidays.includes()` con un `TypeError` accidental, que `assert.throws` interpretaba como "pasa". Tras la validación es un verde genuino (el error proviene de `validateSchedule`). Ejemplo real de por qué una fase roja debe revisarse con cabeza y no darse por buena.
 3. **Invitado sorpresa**: el motor viejo, al agotar `jumpToNextShift`, podía **consumir minutos sobre días no laborables** (devuelve un día no laborable y el bucle consume igualmente). El `RangeError` de T-07 elimina esa ruta de "fechas inventadas".
+
+---
+
+### Sesión 1b — 2026-08-02 (continúa)
+**Objetivo:** Bloque B (hitos M3 y M4). **Resultado: COMPLETADO — `npm test` 18/18.**
+
+- [x] T-09: contrato de eventos (mensaje completo por salto; T18 añadido)
+- [x] T-10/T-11: docs alineadas y versionadas (PR #2 mergeado)
+- [x] T-12: `js/ui.js` extraído; `app.js` 678 → 230 líneas
+- [x] T-13: cero `onclick`; `reset()` sin reload
+- [x] T-14: logs de trazado fuera; "Falla la conexion Supabase" → "Hugo Intern"
+- [x] Verificación: 18/18 tests verdes, `node --check` OK, llamadas `AuroraUi.*` todas expuestas
+
+**Pendiente manual (usuario):** checklist de regresión en navegador — carga local, selección por ID, directorio (búsqueda/filtro/popover), duraciones, cálculo, reset, eventos completos y calendario. Luego abrir `index.html` desde `file://` y confirmar que Supabase sigue degradando bien.
