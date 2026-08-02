@@ -1,0 +1,2 @@
+# Forzar LF en scripts ejecutables (Netlify/Linux)
+*.sh text eol=lf
