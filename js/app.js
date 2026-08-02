@@ -581,7 +581,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Concurrency Logic: Max(Now, BusyUntil)
         const realStart = new Date(Math.max(now.getTime(), worker.busyUntil ? new Date(worker.busyUntil).getTime() : 0));
         
-        const result = AuroraEstimator.calculate(realStart, state.durationMinutes, worker);
+        let result;
+        try {
+            result = AuroraEstimator.calculate(realStart, state.durationMinutes, worker);
+        } catch (err) {
+            resultSection.classList.add('hidden', 'translate-y-full', 'opacity-0');
+            emptyState.classList.remove('hidden', 'scale-95', 'opacity-0');
+            emptyStateTitle.textContent = 'Error de cálculo';
+            emptyStateHint.textContent = (err && err.message) ? err.message : 'No se pudo calcular la estimación';
+            return false;
+        }
         
         if (result) {
             emptyState.classList.add('hidden', 'scale-95', 'opacity-0');
