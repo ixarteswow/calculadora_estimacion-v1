@@ -1,7 +1,18 @@
+# Supabase
 
-- Project name: calculadora-estimacion
-- Project ID: rxlpviuvvtudnkgxacxf
+Proyecto: calculadora-estimacion (proyecto nuevo)
 
+> Las credenciales NO se versionan. Van como variables de entorno
+> (Netlify: `SUPABASE_URL` + `SUPABASE_KEY`; local: `js/config.js`, gitignored).
 
-- Project URL: https://rxlpviuvvtudnkgxacxf.supabase.co
-- Anon / Public Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ4bHB2aXV2dnR1ZG5rZ3hhY3hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5NjkzMjUsImV4cCI6MjA4MTU0NTMyNX0.2lMbHnqtD2umo90_Oc48Uwc-psaUqAzkvi-M8R0INgM
+## Variables
+
+| Variable | Dónde copiarla en el dashboard |
+|---|---|
+| `SUPABASE_URL` | Project Settings → API → Project URL |
+| `SUPABASE_KEY` | Project Settings → API → **publishable** key (NUNCA la secret key) |
+
+## Notas
+
+- El proyecto viejo (`rxlpviuvvtudnkgxacxf`) quedó descartado; la app usa el nuevo.
+- `test_supabase.html` es un probe de conexión local (no forma parte del sitio).
