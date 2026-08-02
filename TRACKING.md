@@ -43,11 +43,18 @@
 
 ## Bloque B — Claridad y trazabilidad (P1)
 
+### Hito M3 — Trazabilidad y documentación ✅
+
 | ID | Descripción | Estado | Notas |
 |---|---|---|---|
-| T-09 | Contrato de eventos: mensajes completos + T18 | ⬜ | |
-| T-10 | Alinear `docs/knowledge/*` con código y tests | ⬜ | |
-| T-11 | D-03: versionar `docs/knowledge/` | ⬜ | |
+| T-09 | Contrato de eventos: mensajes completos + T18 | ✅ | `Fin de jornada: continúa en el próximo turno` por jornada agotada; UI muestra el mensaje entero (sin `split(' ')[0]`) |
+| T-10 | Alinear `docs/knowledge/*` con código y tests | ✅ | Contrato de `schedule`, errores, eventos y ejemplos en `logica_estimacion.md`; autoridad del motor en `arquitectura_datos.md` |
+| T-11 | D-03: versionar `docs/knowledge/` | ✅ | `docs/` fuera de `.gitignore`; 15 archivos commiteados |
+
+### Hito M4 — Refactor mínimo de interfaz
+
+| ID | Descripción | Estado | Notas |
+|---|---|---|---|
 | T-12 | Extraer render a `js/ui.js` | ⬜ | |
 | T-13 | Listeners en vez de `onclick`; `reset()` sin reload | ⬜ | |
 | T-14 | Limpieza: comentarios duplicados, logs, D-04 | ⬜ | |
