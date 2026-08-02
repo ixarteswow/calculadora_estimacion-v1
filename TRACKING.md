@@ -63,13 +63,26 @@
 
 ---
 
-## Bloque C — Cierre (P2)
+## Bloque C — Cierre (P2) ✅ COMPLETADO
 
 | ID | Descripción | Estado | Notas |
 |---|---|---|---|
-| T-15 | CSS propio → `css/aurora.css` | ⬜ | |
-| T-16 | Festivos vigentes 2025–2026 (D-05) | ⬜ | |
-| T-17 | Verificación final + DoD + retro | ⬜ | |
+| T-15 | CSS propio → `css/aurora.css` | ✅ | `index.html` 501 → 233 líneas; `tailwind.config` sigue inline (plan) |
+| T-16 | Festivos vigentes 2025–2026 (D-05) | ✅ | A101: 10 festivos nacionales; B202: 4; en `workers.js` y `setup_workers.sql` |
+| T-17 | Verificación final + DoD + retro | ✅ | 18/18 tests; cero referencias a 2024; retro en RUNBOOK |
+
+## Definition of Done del proyecto ✅
+
+1. ✅ `npm test` pasa 18/18 desde checkout limpio.
+2. ✅ Ninguna entrada inválida produce fecha de finalización ni congela la página.
+3. ✅ Resultados válidos previos conservados (T01–T09 congelados).
+4. ✅ Contrato de horarios y eventos documentado, versionado y coincide con los tests.
+5. ✅ `app.js` orquesta (230 líneas); render en `ui.js`; cero `onclick`; `reset()` real.
+6. ✅ CSS separado; diseño sin cambios intencionados.
+7. ✅ Sin dependencias ni capas nuevas (solo `node:test`, ya incluido en Node).
+8. ✅ RUNBOOK y log de decisiones actualizados.
+
+**Pendiente de usuario:** checklist manual en navegador (carga, selección, directorio, cálculo, reset, eventos, calendario, degradación Supabase) y verificar Netlify ONLINE.
 
 ---
 
