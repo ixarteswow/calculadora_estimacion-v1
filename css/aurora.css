@@ -1,0 +1,272 @@
+/* ==========================================
+   Aurora — CSS propio (separado de index.html)
+   Tailwind CDN permanece en index.html.
+   ========================================== */
+
+:root {
+    --mojo-light: #e0f7fa;
+    --mojo-cloud: #f0f9ff;
+    --mojo-primary: #0288d1;
+    --mojo-dark: #01579b;
+    --mojo-accent: #ffb300;
+    --mojo-action: #1a1a2e;
+    --neutral-bg: #f5f7fa;
+    --neutral-mid: #c3cfe2;
+}
+
+body {
+    background: linear-gradient(135deg, var(--neutral-bg) 0%, var(--neutral-mid) 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Floating Clouds Background */
+.cloud {
+    position: absolute;
+    background: #fff;
+    border-radius: 200px;
+    opacity: 0.8;
+    animation: floatCloud linear infinite;
+    z-index: 0;
+    filter: blur(2px);
+}
+
+.cloud::after, .cloud::before {
+    content: '';
+    position: absolute;
+    background: inherit;
+    border-radius: 50%;
+}
+
+.c1 { width: 220px; height: 100px; top: 10%; left: -250px; animation-duration: 45s; }
+.c1::after { width: 100px; height: 100px; top: -50px; left: 30px; }
+.c1::before { width: 120px; height: 120px; top: -70px; left: 80px; }
+
+.c2 { width: 180px; height: 90px; top: 40%; left: -200px; animation-duration: 65s; animation-delay: 5s; transform: scale(0.8); opacity: 0.6; }
+.c2::after { width: 70px; height: 70px; top: -40px; left: 20px; }
+.c2::before { width: 90px; height: 90px; top: -55px; left: 60px; }
+
+.c3 { width: 250px; height: 120px; top: 70%; left: -300px; animation-duration: 55s; animation-delay: 15s; }
+.c3::after { width: 110px; height: 110px; top: -60px; left: 35px; }
+.c3::before { width: 140px; height: 140px; top: -80px; left: 90px; }
+
+@keyframes floatCloud {
+    0% { transform: translateX(-300px); }
+    100% { transform: translateX(120vw); }
+}
+
+/* Glassmorphism Card Utility */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    z-index: 10;
+}
+
+/* Scrollbar Hide */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Validation Shake */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+.animate-shake {
+    animation: shake 0.3s ease-in-out;
+}
+
+.tile-invalid {
+    border-color: var(--mojo-primary) !important;
+    background: rgba(224, 247, 250, 0.55) !important;
+}
+
+.duration-picker-menu {
+    box-shadow: 0 12px 40px rgba(1, 87, 155, 0.12);
+}
+
+/* Directorio modal: tabla en celdas */
+.directory-table {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: #fff;
+}
+.directory-header,
+.directory-row {
+    display: grid;
+    grid-template-columns: 4.25rem minmax(0, 1fr) minmax(0, 1fr) 6.5rem;
+    width: 100%;
+}
+.directory-header {
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+}
+.directory-header .directory-cell {
+    padding: 0.5rem 0.5rem;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #6b7280;
+    border-right: 1px solid #e5e7eb;
+    line-height: 1.2;
+}
+.directory-header .directory-cell:last-child {
+    border-right: none;
+    text-align: center;
+}
+.directory-row {
+    border: none;
+    border-bottom: 1px solid #f3f4f6;
+    background: #fff;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.15s ease;
+}
+.directory-row:last-child {
+    border-bottom: none;
+}
+.directory-row:hover {
+    background: #f0f9ff;
+}
+.directory-row .directory-cell {
+    padding: 0.55rem 0.5rem;
+    border-right: 1px solid #f3f4f6;
+    display: flex;
+    align-items: center;
+    min-height: 2.65rem;
+    min-width: 0;
+}
+.directory-row .directory-cell:last-child {
+    border-right: none;
+}
+.directory-cell--id {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: #374151;
+}
+.directory-cell--name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1f2937;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.directory-cell--role {
+    font-size: 11px;
+    font-weight: 500;
+    color: #6b7280;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.directory-cell--status {
+    justify-content: center;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    line-height: 1.25;
+    padding-left: 0.35rem;
+    padding-right: 0.35rem;
+}
+.directory-cell--role-code {
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #4b5563;
+    letter-spacing: 0.04em;
+}
+.directory-popover {
+    position: fixed;
+    z-index: 60;
+    width: 15.5rem;
+    padding: 0.75rem;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.14);
+    pointer-events: none;
+}
+.directory-popover.hidden {
+    display: none;
+}
+.directory-popover__header {
+    display: flex;
+    gap: 0.625rem;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+.directory-popover__avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1px solid #e5e7eb;
+}
+.directory-popover__name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #111827;
+    line-height: 1.2;
+}
+.directory-popover__role {
+    font-size: 11px;
+    font-weight: 600;
+    color: #374151;
+    line-height: 1.3;
+    margin-top: 0.2rem;
+}
+.directory-popover__id {
+    font-size: 10px;
+    font-weight: 600;
+    font-family: ui-monospace, monospace;
+    color: #0288d1;
+    margin-top: 0.25rem;
+}
+.directory-popover__row {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 10px;
+    line-height: 1.35;
+    margin-top: 0.35rem;
+}
+.directory-popover__label {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #9ca3af;
+    flex-shrink: 0;
+}
+.directory-popover__value {
+    font-weight: 600;
+    color: #374151;
+    text-align: right;
+}
+.directory-popover__badge {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.2rem 0.45rem;
+    border-radius: 0.25rem;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}

@@ -9,12 +9,17 @@
 - **Hallazgo clave:** el bug de horario inválido colgaba la suite en fase roja (bucle infinito real, no teórico). El motor viejo además consumía minutos sobre días no laborables al agotar la búsqueda de turnos.
 - **Estado:** `npm test` 18/18 verde. Pendiente: checklist manual en navegador y Bloque C (P2).
 
+## Retro del plan (2026-08-02)
+
+1. **¿Qué práctica aportó más valor?** El TDD con fase roja. El bucle infinito de T16 se demostró solo al colgar la suite, y el refactor de UI (678 → 230 líneas) se hizo sin miedo porque los 18 tests eran la red de seguridad. Sin la batería, ese refactor habría sido una apuesta.
+2. **¿Qué costó más de lo estimado?** T-12 (`ui.js`) — la extracción en sí fue mecánica, pero la verificación manual del DOM no es automatizable sin jsdom/browser y ese hueco quedó como checklist para el usuario. También la fase roja: el cuelgue de T16 obligó a decidir `skip` documentado en vez de dejarlo correr.
+3. **¿Qué se haría distinto?** (a) Revisar los falsos verdes de la fase roja con asserts de mensaje de error, no solo de clase; (b) hacer una pasada manual en navegador entre hitos, no solo al final; (c) capturar la decisión D-04 (renombrado del worker) antes, para no dejarla para el final; (d) no encadenar 3 PRs seguidos sin que el usuario pruebe el primero.
+
 ## Próxima sesión (objetivos)
 
-1. **Checklist manual en navegador** (Bloque A+B): carga `file://`, selección por ID, directorio completo, duraciones, cálculo, reset, eventos completos, calendario, degradación Supabase.
-2. **Bloque C (P2)**: `css/aurora.css` (T-15), festivos vigentes 2025–2026 (T-16, D-05), verificación final + DoD + retro (T-17).
-3. **Netlify**: redeploy y verificar pill ONLINE tras los cambios.
-4. **Git**: resolver el SSL de push con certificado configurado (no `http.sslVerify=false`).
+1. **Checklist manual en navegador** (Bloque A+B+C): carga `file://`, selección por ID, directorio completo, duraciones, cálculo, reset, eventos completos, calendario, degradación Supabase.
+2. **Netlify**: redeploy y verificar pill ONLINE tras los cambios (incluye `css/aurora.css`).
+3. **Git**: resolver el SSL de push con certificado configurado (no `http.sslVerify=false`).
 
 ---
 

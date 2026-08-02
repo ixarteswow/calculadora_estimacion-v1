@@ -8,7 +8,7 @@ window.WorkerDatabase = {
         "schedule": {
             "workDays": [1, 2, 3, 4, 5], 
             "startHour": 9, "startMinute": 0, "endHour": 17, "endMinute": 0,
-            "holidays": ["2024-12-25", "2024-01-01", "2024-05-01"] 
+            "holidays": ["2025-01-01", "2025-01-06", "2025-04-18", "2025-05-01", "2025-12-25", "2026-01-01", "2026-01-06", "2026-04-03", "2026-05-01", "2026-12-25"] 
         }
     },
     "B202": {
@@ -20,7 +20,7 @@ window.WorkerDatabase = {
         "schedule": {
             "workDays": [2, 3, 4, 5, 6], 
             "startHour": 14, "startMinute": 0, "endHour": 22, "endMinute": 0,
-            "holidays": ["2024-12-25"]
+            "holidays": ["2025-05-01", "2025-12-25", "2026-05-01", "2026-12-25"]
         }
     },
     "C303": {
