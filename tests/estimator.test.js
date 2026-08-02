@@ -147,9 +147,7 @@ test('T15: hora/minuto fuera de rango lanza error', () => {
     });
 });
 
-test('T16: inicio de turno igual o posterior al fin lanza error', {
-    skip: 'FASE ROJA: con el motor actual este caso provoca bucle infinito (timeUntilEnd nunca positivo) y cuelga la suite. Se activa cuando T-06 valide el horario.'
-}, () => {
+test('T16: inicio de turno igual o posterior al fin lanza error', () => {
     const invalidSchedules = [
         { startHour: 17, endHour: 9 },
         { startHour: 9, endHour: 9 }
