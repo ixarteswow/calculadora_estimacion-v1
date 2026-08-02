@@ -1,0 +1,9 @@
+{
+  "name": "calculadora-aurora",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Calculadora de Estimación Aurora — demo estática",
+  "scripts": {
+    "test": "node --test tests/estimator.test.js"
+  }
+}

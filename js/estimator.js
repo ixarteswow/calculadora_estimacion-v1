@@ -1,4 +1,4 @@
-window.AuroraEstimator = (function() {
+const AuroraEstimator = (function() {
 
     function getDayOfWeek(date) { return date.getDay(); }
     
@@ -103,3 +103,11 @@ window.AuroraEstimator = (function() {
     };
 
 })();
+
+// Compatibilidad dual: navegador (window) y Node (module.exports) para los tests.
+if (typeof window !== 'undefined') {
+    window.AuroraEstimator = AuroraEstimator;
+}
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = AuroraEstimator;
+}
