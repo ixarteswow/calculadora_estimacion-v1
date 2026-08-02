@@ -614,7 +614,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                  result.events.slice(0, 3).forEach(evt => {
                     const span = document.createElement('span');
                     span.className = "text-[10px] bg-white/20 px-2 py-1 rounded text-white font-medium";
-                    span.textContent = evt.msg.split(' ')[0]; // Short msg
+                    span.textContent = evt.msg;
                     timelineContainer.appendChild(span);
                  });
             } else {
