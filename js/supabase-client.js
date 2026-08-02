@@ -1,5 +1,3 @@
-console.log("Trace: supabase-client.js loaded");
-
 const SupabaseClient = {
     // Read from window.CONFIG (loaded from js/config.js)
     url: window.CONFIG ? window.CONFIG.SUPABASE_URL : '',
@@ -7,7 +5,6 @@ const SupabaseClient = {
     client: null,
 
     init: function() {
-        console.log("Trace: SupabaseClient.init() called");
         if (window.supabase) {
             try {
                 this.client = window.supabase.createClient(this.url, this.key, {
@@ -17,9 +14,8 @@ const SupabaseClient = {
                         autoRefreshToken: false
                     }
                 });
-                console.log("Supabase Client Initialized");
             } catch (e) {
-                console.warn("Supabase Init Error:", e);
+                console.error("Supabase Init Error:", e);
             }
         } else {
             console.warn("Supabase SDK not found on window.");
@@ -33,7 +29,6 @@ const SupabaseClient = {
         }
 
         try {
-            console.log("Fetching workers from Supabase...");
             const { data, error } = await this.client
                 .from('workers')
                 .select('*');
@@ -41,7 +36,6 @@ const SupabaseClient = {
             if (error) throw error;
             
             if (data) {
-                console.log(`Supabase fetch success: ${data.length} workers found.`);
                 // Convert array to object map (ID -> Worker)
                 const workerMap = {};
                 data.forEach(w => {

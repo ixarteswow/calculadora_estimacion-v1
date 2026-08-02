@@ -85,10 +85,10 @@ window.WorkerDatabase = {
     },
     "H808": {
         "id": "H808",
-        "name": "Falla la conexion Supabase",
+        "name": "Hugo Intern",
         "role": "Becario QA",
         "status": "Aprendiendo",
-        "avatar": "https://ui-avatars.com/api/?name=Hector+Intern&background=795548&color=fff",
+        "avatar": "https://ui-avatars.com/api/?name=Hugo+Intern&background=795548&color=fff",
         "schedule": {
             "workDays": [1, 3, 5], 
             "startHour": 10, "startMinute": 0, "endHour": 14, "endMinute": 0,
