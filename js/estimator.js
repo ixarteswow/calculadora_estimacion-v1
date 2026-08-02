@@ -138,6 +138,7 @@ const AuroraEstimator = (function() {
                 minutesRemaining = 0;
             } else {
                 minutesRemaining -= timeUntilEnd;
+                events.push({ type: 'jump', msg: 'Fin de jornada: continúa en el próximo turno' });
                 cursor = jumpToNextShift(cursor, worker.schedule);
             }
         }

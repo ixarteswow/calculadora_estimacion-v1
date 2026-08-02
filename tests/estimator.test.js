@@ -160,6 +160,29 @@ test('T16: inicio de turno igual o posterior al fin lanza error', () => {
     });
 });
 
+test('T18: contrato de eventos según el tipo de salto', () => {
+    // Sin salto: inicio ajustado al turno no genera evento.
+    const sinSalto = AuroraEstimator.calculate(new Date(2026, 7, 5, 7, 0), 60, makeWorker());
+    assert.equal(sinSalto.events.length, 0);
+
+    // Día no laborable: evento de inicio diferido.
+    const finDeSemana = AuroraEstimator.calculate(new Date(2026, 7, 8, 9, 0), 60, makeWorker());
+    assert.equal(finDeSemana.events.length, 1);
+    assert.equal(finDeSemana.events[0].msg, 'Inicio diferido: fuera de turno');
+
+    // Jornada agotada: un evento por día consumido completo.
+    const cruzaJornada = AuroraEstimator.calculate(new Date(2026, 7, 5, 16, 0), 120, makeWorker());
+    assert.equal(cruzaJornada.events.length, 1);
+    assert.equal(cruzaJornada.events[0].msg, 'Fin de jornada: continúa en el próximo turno');
+
+    // Tres jornadas completas: dos agotamientos y una llegada a hora exacta.
+    const tresJornadas = AuroraEstimator.calculate(new Date(2026, 7, 5, 9, 0), 1440, makeWorker());
+    assert.equal(tresJornadas.events.length, 2);
+    tresJornadas.events.forEach((evt) => {
+        assert.equal(evt.msg, 'Fin de jornada: continúa en el próximo turno');
+    });
+});
+
 test('T17: calendario sin ningún turno disponible lanza error', () => {
     // Bloques festivos que cubren todo el horizonte de búsqueda del motor.
     const blocked = [];
